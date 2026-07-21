@@ -150,6 +150,138 @@ This project is open source under the GPLv2 license.
 
 ---
 
+Here's a concise self‑reference section for your Arduino IDE setup and project notes.
+
+---
+
+## Project Setup Notes / 项目设置备注
+
+### 1. Partition Scheme
+
+| Setting | Value |
+|---------|-------|
+| Board | ESP32 Dev Module |
+| Partition Scheme | **No OTA (Large APP)** |
+| Why | This project needs extra program space for audio/vocabulary data. Default (OTA) will cause upload failure due to insufficient space. |
+
+**Steps:**
+- Arduino IDE → Tools → Partition Scheme → **No OTA (Large APP)**
+- If using other ESP32 boards, choose the largest APP partition available
+
+---
+
+### 2. Required Libraries (Exact Versions)
+
+| Library | Source | Notes |
+|---------|--------|-------|
+| LiquidCrystal I2C | Library Manager | Latest version (ignore AVR warning) |
+| BluetoothA2DPSource | Library Manager | Phil Schatzmann version |
+| TalkiePCM | GitHub (pschatzmann/TalkiePCM) | NOT the original Talkie library! |
+| Vocab_US_Large | Included with TalkiePCM | Check that vocabulary is present |
+
+**Important:** Do NOT install the original Talkie library (Peter Knight) – it uses different methods and will cause compilation errors.
+
+---
+
+### 3. I2C LCD Address
+
+- Default: `0x27`
+- Alternative: `0x3F`
+- Run I2C scanner sketch if your LCD doesn't work
+
+---
+
+### 4. Upload Settings
+
+| Setting | Value |
+|---------|-------|
+| Upload Speed | 115200 (default) |
+| USB Port | Select correct COM port |
+| Flash Size | 4MB (default for DevKit C) |
+
+---
+
+### 5. Serial Monitor
+
+- Baud rate: `115200`
+- Opens automatically after upload
+- Shows distance readings and speech triggers
+
+---
+
+### 6. Power Supply
+
+| Component | Voltage | Current |
+|-----------|---------|---------|
+| ESP32 | USB 5V | ~100mA |
+| HC‑SR04 | **3.3V** (not 5V!) | ~15mA |
+| LCD I2C | **5V** | ~20mA |
+
+**Do NOT power HC‑SR04 with 5V – it will damage the sensor!**
+
+---
+
+### 7. First Time Upload Checklist
+
+- [ ] ESP32 plugged in via USB
+- [ ] Correct COM port selected
+- [ ] Partition Scheme set to **No OTA (Large APP)**
+- [ ] All libraries installed
+- [ ] No other Talkie library installed (conflict)
+- [ ] Power cycled after upload (sometimes needed)
+
+---
+
+### 8. Common Errors & Fixes
+
+| Error | Fix |
+|-------|-----|
+| `'class TalkiePCM' has no member named 'process'` | You have the wrong Talkie library – remove original Talkie, install TalkiePCM |
+| `Sketch too big` | Change Partition Scheme to No OTA |
+| `I2C LCD not displaying` | Check address (0x27 vs 0x3F) or run scanner |
+| `No Bluetooth audio` | Put speaker in pairing mode before powering ESP32 |
+| `Distance always 150cm` | Check HC‑SR04 connections: VCC to 3.3V, GND to GND, TRIG/ECHO to GPIO 12/13 |
+
+---
+
+### 9. Quick Compilation Check
+
+- Build time: ~30–60 seconds
+- Final binary size: ~800KB – 1MB (within No OTA partition)
+- If size > 1.2MB, you may need to reduce vocabulary or optimize code
+
+---
+
+### 10. Project Files Structure
+
+```
+esp32talkdistlcdbluetooh/
+├── esp32talkdistlcdbluetooh.ino    # Main sketch
+├── README.md                        # Project documentation
+├── Vocab_US_Large.h                 # Included via library
+└── (No other files needed)
+```
+
+---
+
+### Full Quick‑Start Sequence
+
+1. Open Arduino IDE
+2. Set Board: **ESP32 Dev Module**
+3. Set Partition Scheme: **No OTA (Large APP)**
+4. Install required libraries
+5. Open the .ino file
+6. Connect ESP32 via USB
+7. Select COM port
+8. **Upload**
+9. Power cycle ESP32
+10. Pair Bluetooth speaker (the device appears as an audio source)
+11. Test with hand movement toward sensor
+
+---
+
+These notes will save you time during future uploads. Keep them handy!
+
 ## Connect / 联系
 
 - **Project Video:** [Insert link]
